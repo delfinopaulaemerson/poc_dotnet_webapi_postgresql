@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "ioOSsBCZaSekyi0ui+iWbEFdI44m5OJ+8S20Om+9AYw=",
+  "Source": "PocDotNetPostgresql",
+  "BasePath": "_content/PocDotNetPostgresql",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
