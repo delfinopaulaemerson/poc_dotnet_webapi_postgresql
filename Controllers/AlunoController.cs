@@ -1,54 +1,63 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PocDotNetPostgresql.Data;
 using PocDotNetPostgresql.Models;
+using Confluent.Kafka;
+using System.Text.Json;
 namespace PocDotNetPostgresql.Controllers;
+
 
 [ApiController]
 [Route("api/[controller]")]
 public class AlunoController : ControllerBase
 {
-	private readonly AppDbContext _context;
+    private readonly AppDbContext _context;
 
-    // O EF Core injeta o contexto automaticamente aqui
-    public AlunoController(AppDbContext context) {
+    private readonly IProducer<string, string> _producer;
 
-		_context = context;
-	}
+    private const string TopicName = "tpc_dotnet_api";
 
-	[HttpPost]
-	public async Task<IActionResult> CreateAluno([FromBody] Alunos newAlunos) {
+    // injecao de dependencia
+    public AlunoController(AppDbContext context, IProducer<string, string> producer) {
 
-		if (newAlunos == null) {
-			return BadRequest("Invalid product data.");
-		}
+        _context = context;
+        _producer = producer;
+    }
 
-		var aluno = new Alunos{
-			Nome = newAlunos.Nome,
-			Faltas = newAlunos.Faltas,
-			Media = newAlunos.Media,
+    [HttpPost]
+    public async Task<IActionResult> CreateAluno([FromBody] Alunos newAlunos) {
+
+        if (newAlunos == null) {
+            return BadRequest("Invalid product data.");
+        }
+
+        var aluno = new Alunos {
+            Nome = newAlunos.Nome,
+            Faltas = newAlunos.Faltas,
+            Media = newAlunos.Media,
             Situacao = newAlunos.Situacao
-		};
+        };
 
-		_context.Alunos.Add(aluno);
+        _context.Alunos.Add(aluno);
         // Gera o Id automaticamente
         await _context.SaveChangesAsync();
 
         // Best practice: Return 201 Created with the location of the new resource
-        return CreatedAtAction(nameof(CreateAluno), new { aluno.Id}, aluno);
+        return CreatedAtAction(nameof(CreateAluno), new { aluno.Id }, aluno);
 
-	}
+    }
 
     ///api/Aluno
     [HttpGet]
-	public async Task<IActionResult> GetAlunos() {
+    public async Task<IActionResult> GetAlunos() {
 
-		var alunos = await _context.Alunos.AsNoTracking()
+        var alunos = await _context.Alunos.AsNoTracking()
                              .ToListAsync();
 
-		return Ok(alunos);
+        return Ok(alunos);
 
-	}
+    }
 
     ///api/Aluno/{id}
     [HttpGet("{id:int}")]
@@ -57,7 +66,7 @@ public class AlunoController : ControllerBase
 
         if (await _context.Alunos.FindAsync(id) == null) {
             return NotFound();
-		}
+        }
 
 
         return Ok(await _context.Alunos.FindAsync(id));
@@ -66,26 +75,26 @@ public class AlunoController : ControllerBase
 
     ///api/Aluno/{id}
     [HttpPut("{id:int}")]
-	public async Task<IActionResult> update(int id, Alunos aluno) {
+    public async Task<IActionResult> update(int id, Alunos aluno) {
 
-		if (id != aluno?.Id) {
-			return BadRequest("Mismatched ID in URL and request body.");
-		}
+        if (id != aluno?.Id) {
+            return BadRequest("Mismatched ID in URL and request body.");
+        }
 
-		_context.Entry(aluno).State = EntityState.Modified;
+        _context.Entry(aluno).State = EntityState.Modified;
 
-		try{
+        try {
 
-			await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-		}catch (DbUpdateConcurrencyException) {
+        } catch (DbUpdateConcurrencyException) {
             throw;
         }
 
         // HTTP 204 No Content
         return NoContent();
-   
-	}
+
+    }
 
     ///api/Aluno/{id}
     [HttpDelete("{id:int}")]
@@ -105,5 +114,35 @@ public class AlunoController : ControllerBase
     }
 
 
-}
+    [HttpPost("/producer")]
+    public async Task<IActionResult> ProducerEvent([FromBody] Alunos newAlunos) {
+
+        try {
+            var messageValue = JsonSerializer.Serialize(newAlunos);
+
+            var message = new Message<string, string>
+            {
+                Key = newAlunos.Id.ToString(),
+                Value = messageValue
+            };
+
+            DeliveryResult<string, string> result = await _producer.ProduceAsync(TopicName,message);
+
+            return Ok(new
+            {
+                Status = "Mensagem enviada com sucesso!",
+                Partition = result.Partition.Value,
+                Offset = result.Offset.Value
+            });
+
+
+        } catch(ProduceException<string,string> ex) {
+            return StatusCode(500, $"Falha ao publicar no Kafka: {ex.Error.Reason}");
+        }
+
+
+    }
+    
+
+    }
 

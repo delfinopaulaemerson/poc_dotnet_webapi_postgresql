@@ -1,30 +1,24 @@
 ﻿<Properties StartupConfiguration="{01872BBB-DF73-41DE-982F-CF99B9B6A00A}|https">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/emersondepauladelfino/PocDotNetPostgresql/Controllers/AlunoController.cs" relfile="Controllers/AlunoController.cs" line="21" column="1" />
+      <Breakpoint file="/Users/emersondepauladelfino/PocDotNetPostgresql/Controllers/AlunoController.cs" relfile="Controllers/AlunoController.cs" line="71" column="1" />
+      <Breakpoint file="/Users/emersondepauladelfino/PocDotNetPostgresql/Controllers/AlunoController.cs" relfile="Controllers/AlunoController.cs" line="94" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.ItemProperties.PocDotNetPostgresql PreferredExecutionTarget="/Applications/Safari.app" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Controllers/AlunoController.cs">
     <Files>
-      <File FileName="AppDbContext.cs" Line="16" Column="2" IsPinned="True" />
-      <File FileName="appsettings.json" Line="13" Column="1" />
-      <File FileName="Models/Alunos.cs" Line="18" Column="1" />
-      <File FileName="Program.cs" Line="15" Column="1" />
-      <File FileName="Controllers/WeatherForecastController.cs" Line="4" Column="1" />
-      <File FileName="Controllers/AlunoController.cs" Line="32" Column="28" />
+      <File FileName="appsettings.json" />
+      <File FileName="Models/Alunos.cs" Line="3" Column="14" />
+      <File FileName="Program.cs" />
+      <File FileName="Controllers/AlunoController.cs" Line="108" Column="2" />
+      <File FileName="Data/AppDbContext.cs" Line="1" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="PocDotNetPostgresql">
-            <Node name="PocDotNetPostgresql">
-              <Node name="Models" expanded="True" />
-            </Node>
-          </Node>
+          <Node name="PocDotNetPostgresql" expanded="True" />
         </State>
       </Pad>
       <Pad Id="MonoDevelop.Debugger.WatchPad">
@@ -32,4 +26,6 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.PocDotNetPostgresql PreferredExecutionTarget="/Applications/Safari.app" />
 </Properties>
