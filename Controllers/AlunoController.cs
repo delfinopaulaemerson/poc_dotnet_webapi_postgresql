@@ -92,7 +92,7 @@ public class AlunoController : ControllerBase
         }
 
         // HTTP 204 No Content
-        return NoContent();
+            return NoContent();
 
     }
 

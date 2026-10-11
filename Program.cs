@@ -5,6 +5,18 @@ using Confluent.Kafka;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularApp", policy =>
+   {
+       policy.WithOrigins("http://localhost:4200")
+       .AllowAnyMethod()
+       .AllowAnyHeader();
+
+   });
+
+});
+
 // 1. Obter as configurações do Kafka
 var bootstrapServers = builder.Configuration.GetValue<string>("KafkaSettings:BootstrapServers");
 
@@ -41,6 +53,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+
+app.UseRouting();
+app.UseCors("AngularApp");
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
